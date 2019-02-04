@@ -3,19 +3,20 @@
   Reports domain and server configuration data
 
   .DESCRIPTION
-   Used to document failed mailboxs during a migration for verification and troubleshooting purposes
+   Used to document Active Directory and Windows server configurations.
    Saves workbook is same directory as script. This script requires the ImportExcel module for PowerShell.
    https://github.com/dfinke/ImportExcel
    https://www.powershellgallery.com/packages/ImportExcel/4.0.11
 
   .PARAMETER ClientName
+  Required parameter.
   Client name will be appended to the exported file name
 
   .EXAMPLE
   .\Get-ServerData 'Company Name'
 
   .OUTPUTS
-  Company Name_MigrationBatchStats.xlsx
+  Company Name_AdAssessment.xlsx
 
   .NOTES
 #>
@@ -27,10 +28,14 @@ Param
     )
 
 Import-Module activedirectory
+
+## variables
 $domain = Get-ADDomain
 $forest = Get-ADForest
 $DCs = Get-ADDomainController -Filter *
 $servers = Get-ADComputer -LDAPFilter "(&(objectcategory=computer)(OperatingSystem=*server*))"
+$path = $ClientName + '_AdASsessment.xlsx'
+$arr01 = @()
 
 
 ## functions
