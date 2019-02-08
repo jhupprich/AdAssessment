@@ -44,12 +44,15 @@ function Get-Servers {
         {
        $name = $server.Name
          if(Test-Connection $name -Count 1 -Quiet)
-            {                
-            Get-ADComputer -Filter {Name -eq $name} -Properties * | select Name,OperatingSystem,@{n="IP Address";`
-            e={$_.IPv4Address}} | fl
-            $roles = Get-WindowsFeature | ? {$_.Installed -and $_.DisplayName -notlike "*tools*"} |`
-             ? {$_.displayName -notlike "*shell*"} | ? {$_.displayName -notlike "*.net*"} | ? {$_.displayName -notlike "*64*"} | ? {$_.displayName -notlike "*support*"}               
-            $roles.displayname              
+            {
+                #roles
+                Get-ADComputer -Filter {Name -eq $name} -Properties * | Select-Object Name,OperatingSystem,@{n="IP Address";`
+                e={$_.IPv4Address}} | fl
+                $roles = Get-WindowsFeature | Where-Object {$_.Installed -and $_.DisplayName -notlike "*tools*"} | `
+                Where-Object {$_.displayName -notlike "*shell*"} | Where-Object {$_.displayName -notlike "*.net*"} | `
+                Where-Object {$_.displayName -notlike "*64*"} | `
+                Where-Object {$_.displayName -notlike "*support*"}               
+                #$roles.displayname              
             }
         }
     }
